@@ -66,6 +66,14 @@ class AlunoService{
             throw error;
         }
     }
+
+    async delete(id){
+        await this.findById(id); // 404 se não existir
+
+        await prisma.aluno.delete({
+            where: { id: Number(id) }
+        });
+    }
 }
 
 module.exports = new AlunoService();

@@ -23,7 +23,7 @@ class AlunoController{
             return response.status(400).json({error: error.message});
         }
     }
-    
+
     async findById(request, response){
         try{
             const { id } = request.params;
@@ -44,6 +44,15 @@ class AlunoController{
         }
     }
 
+    async delete(request, response){
+        try{
+            const { id } = request.params;
+            await alunoService.delete(id);
+            return response.status(204).send(); // 204 = sem corpo na resposta
+        }catch(error){
+            return response.status(error.statusCode || 500).json({error: error.message});
+        }
+    }
 }
 
 module.exports = new AlunoController();
