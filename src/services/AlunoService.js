@@ -3,13 +3,22 @@ const AlunoInvalidoError = require("../errors/AlunoInvalidoError");
 
 class AlunoService{
 
-    async findMany(page, pageSize){
-        const alunos = await prisma.aluno.findMany({
-            skip: (page-1)*pageSize,
-            take: Number(pageSize)
-        });
-        return alunos;
-    }
+    async findMany(page, pageSize, orderBy, order){
+    const camposValidos = ["id", "nome", "email", "createdAt", "updatedAt"];
+    const campo = camposValidos.includes(orderBy) ? orderBy : "id";
+    const direcao = (order === "asc" || order === "desc") ? order : "asc";
+
+    const [alunos, total] = await Promise.all([
+        prisma.aluno.findMany({
+            skip: (page - 1) * pageSize,
+            take: Number(pageSize),
+            orderBy: { [campo]: direcao }
+        }),
+        prisma.aluno.count()
+    ]);
+
+    return { alunos, total };
+}
 
     async create(aluno){
         const {nome, email} = aluno;
